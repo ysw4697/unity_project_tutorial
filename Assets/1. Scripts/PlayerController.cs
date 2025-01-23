@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private float _speed = 10.0f;
+    
     void Start()
     {
         
@@ -13,22 +15,22 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.W))
         {
-            transform.position += new Vector3(0.0f, 0.0f, 1.0f);
+            transform.Translate(Vector3.forward * (_speed * Time.deltaTime));
         }
 
         if (Input.GetKey(KeyCode.S))
         {
-            transform.position -= new Vector3(0.0f, 0.0f, 1.0f);
+            transform.Translate(Vector3.back * (_speed * Time.deltaTime));
         }
 
         if (Input.GetKey(KeyCode.A))
         {
-            transform.position -= new Vector3(1.0f, 0.0f, 0.0f);
+            transform.Translate(Vector3.left * (_speed * Time.deltaTime));
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            transform.position += new Vector3(1.0f, 0.0f, 0.0f);
+            transform.Translate(Vector3.right * (_speed * Time.deltaTime));
         }
     }
 }
