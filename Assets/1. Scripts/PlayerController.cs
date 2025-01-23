@@ -6,12 +6,18 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float _speed = 10.0f;
     
-    void Start()
+    private void Start()
+    {
+        Managers.Input.KeyAction -= OnKeyBoard;
+        Managers.Input.KeyAction += OnKeyBoard;
+    }
+    
+    private void Update()
     {
         
     }
-    
-    void Update()
+
+    private void OnKeyBoard()
     {
         if (Input.GetKey(KeyCode.W))
         {

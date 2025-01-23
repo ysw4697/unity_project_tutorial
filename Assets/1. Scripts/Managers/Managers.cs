@@ -7,7 +7,10 @@ public class Managers : MonoBehaviour
 {
     // 유일성 보장
     private static Managers s_instance;
-    public static Managers Instance { get { Initialize(); return s_instance; } } 
+    private static Managers Instance { get { Initialize(); return s_instance; } } 
+    
+    private InputManager _input = new ();
+    public static InputManager Input { get { return Instance._input; } }
     
     void Start()
     {
@@ -16,7 +19,7 @@ public class Managers : MonoBehaviour
     
     void Update()
     {
-        
+        _input.OnUpdate();
     }
 
     static void Initialize()
