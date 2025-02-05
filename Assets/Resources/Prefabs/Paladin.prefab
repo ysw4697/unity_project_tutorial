@@ -48,6 +48,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3685692520585564748, guid: 8d7ecf07880a00a458e242992ac1deb9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1283408554089789195, guid: 8d7ecf07880a00a458e242992ac1deb9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 8d7ecf07880a00a458e242992ac1deb9, type: 3}
       propertyPath: m_Name
       value: Paladin
@@ -77,3 +85,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 723a6503b53581e46b0612d433745624, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _moveSpeed: 10

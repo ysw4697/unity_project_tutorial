@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Resources;
 using UnityEngine;
 
 // 싱글톤 패턴(전통적인 방식은 아님)
@@ -10,7 +11,11 @@ public class Managers : MonoBehaviour
     private static Managers Instance { get { Initialize(); return s_instance; } } 
     
     private InputManager _input = new ();
+    private ResourceManager _resource = new ();
+    
     public static InputManager Input { get { return Instance._input; } }
+    public static ResourceManager Resource { get { return Instance._resource; } }
+    
     
     void Start()
     {
