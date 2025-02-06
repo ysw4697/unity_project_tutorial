@@ -7,19 +7,25 @@ public class Managers : MonoBehaviour
 {
     // 유일성 보장
     private static Managers s_instance;
-    public static Managers Instance { get { Initialize(); return s_instance; } } 
+    public static Managers Instance { get { Init(); return s_instance; } } 
     
-    void Start()
-    {
-        Initialize();
-    }
+    InputManager _input = new InputManager();
+    ResourceManager _resource = new ResourceManager();
     
-    void Update()
+    public static InputManager Input { get { return Instance._input; } }
+    public static ResourceManager Resource { get { return Instance._resource; } }
+    
+    private void Start()
     {
-        
+        Init();
     }
 
-    static void Initialize()
+    private void Update()
+    {
+        _input.OnUpdate();
+    }
+    
+    static void Init()
     {
         if (s_instance == null)
         {
