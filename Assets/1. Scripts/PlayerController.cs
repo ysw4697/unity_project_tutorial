@@ -7,12 +7,13 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed = 10.0f;
     
-    void Start()
+    private void Start()
     {
-        
+        Managers.Input.KeyAction -= OnKeyboard;
+        Managers.Input.KeyAction += OnKeyboard;
     }
-    
-    void Update()
+
+    void OnKeyboard()
     {
         if (Input.GetKey(KeyCode.W))
         {
