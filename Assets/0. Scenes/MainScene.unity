@@ -172,11 +172,23 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &490406889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 490406883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9926805e09d54049831a7d2b6ad7f91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -356,8 +368,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.30253395, y: -0.051141053, z: 0.016259179, w: 0.9516268}
-  m_LocalPosition: {x: -1.295739, y: 6.7739964, z: -7.2157135}
+  m_LocalRotation: {x: 0.2572084, y: -0.36885628, z: 0.106990315, w: 0.8867593}
+  m_LocalPosition: {x: 5.0078545, y: 6.2912397, z: -3.1111279}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -636,6 +648,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1063364870352135142, guid: bc82bcaf89a59644cbeb5af7a78d12cc, type: 3}
       insertIndex: -1
       addedObject: {fileID: 490406887}
+    - targetCorrespondingSourceObject: {fileID: 1063364870352135142, guid: bc82bcaf89a59644cbeb5af7a78d12cc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 490406889}
   m_SourcePrefab: {fileID: 100100000, guid: bc82bcaf89a59644cbeb5af7a78d12cc, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
