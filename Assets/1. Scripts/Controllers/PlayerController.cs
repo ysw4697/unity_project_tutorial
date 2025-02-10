@@ -68,7 +68,7 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("speed", 0.0f);
     }
 
-    void OnMouseEvent(Define.MouseEvent mouseEvent)
+    private void OnMouseEvent(Define.MouseEvent mouseEvent)
     {
         if (_state == PlayerState.Die)
         {
