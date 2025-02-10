@@ -7,67 +7,70 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed = 10.0f;
     
-    bool _moveToDestination = false;
-    Vector3 _destinationPosition;
+    private Vector3 _destinationPosition;
+    
+    public enum PlayerState
+    {
+        Die,
+        Moving,
+        Idle
+    }
+    private PlayerState _state = PlayerState.Idle;
     
     private void Start()
     {
-        Managers.Input.KeyAction -= OnKeyboard;
-        Managers.Input.KeyAction += OnKeyboard;
         Managers.Input.MouseAction -= OnMouseEvent;
         Managers.Input.MouseAction += OnMouseEvent;
     }
-
+    
     private void Update()
     {
-        if (_moveToDestination)
+        switch (_state)
         {
-            Vector3 direction = _destinationPosition - transform.position;
-            if (direction.magnitude < 0.0001f)
-            {
-                _moveToDestination = false;
-            }
-            else
-            {
-                float moveDistance = Mathf.Clamp(_moveSpeed * Time.deltaTime, 0.0f, direction.magnitude);
-                transform.position += direction.normalized * moveDistance;
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), 10.0f * Time.deltaTime);
-            }
+            case PlayerState.Die:
+                UpdateDie();
+                break;
+            case PlayerState.Moving:
+                UpdateMoving();
+                break;
+            case PlayerState.Idle:
+                UpdateIdle();
+                break;
         }
     }
 
-    void OnKeyboard()
+    private void UpdateDie()
     {
-        if (Input.GetKey(KeyCode.W))
-        {
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.forward), 0.2f);
-            transform.position += Vector3.forward * (_moveSpeed * Time.deltaTime);
-        }
+        // 아무것도 못함
+    }
 
-        if (Input.GetKey(KeyCode.S))
+    private void UpdateMoving()
+    {
+        Vector3 direction = _destinationPosition - transform.position;
+        if (direction.magnitude < 0.0001f)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.back), 0.2f);
-            transform.position += Vector3.back * (_moveSpeed * Time.deltaTime);
+            _state = PlayerState.Idle;
         }
-
-        if (Input.GetKey(KeyCode.A))
+        else
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.left), 0.2f);
-            transform.position += Vector3.left * (_moveSpeed * Time.deltaTime);
-        }
-
-        if (Input.GetKey(KeyCode.D))
-        {
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Vector3.right), 0.2f);
-            transform.position += Vector3.right * (_moveSpeed * Time.deltaTime);
+            float moveDistance = Mathf.Clamp(_moveSpeed * Time.deltaTime, 0.0f, direction.magnitude);
+            transform.position += direction.normalized * moveDistance;
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), 10.0f * Time.deltaTime);
         }
         
-        _moveToDestination= false;
+        Animator animator = GetComponent<Animator>();
+        animator.SetFloat("speed", _moveSpeed);
+    }
+
+    private void UpdateIdle()
+    {
+        Animator animator = GetComponent<Animator>();
+        animator.SetFloat("speed", 0.0f);
     }
 
     void OnMouseEvent(Define.MouseEvent mouseEvent)
     {
-        if (mouseEvent != Define.MouseEvent.Click)
+        if (_state == PlayerState.Die)
         {
             return;
         }
@@ -79,7 +82,7 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Wall")))
         {
             _destinationPosition = hit.point;
-            _moveToDestination = true;
+            _state = PlayerState.Moving;
         }
     }
 }
