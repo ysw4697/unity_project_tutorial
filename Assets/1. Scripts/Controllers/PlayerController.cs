@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.U2D;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -21,6 +22,8 @@ public class PlayerController : MonoBehaviour
     {
         Managers.Input.MouseAction -= OnMouseEvent;
         Managers.Input.MouseAction += OnMouseEvent;
+        
+        Managers.Resource.Instantiate("UI/UI_Button");
     }
     
     private void Update()

@@ -7,11 +7,6 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Define.CameraMode _mode = Define.CameraMode.QuaterView;
     [SerializeField] private Vector3 _delta = new Vector3(0f, 6.0f, -5.0f);
     [SerializeField] private GameObject _player = null;
-    
-    private void Start()
-    {
-        
-    }
 
     private void LateUpdate()
     {
