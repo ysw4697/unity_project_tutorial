@@ -4,6 +4,18 @@ using UnityEngine;
 
 public class Util
 {
+    public static GameObject FindChild(GameObject obj, string name = null, bool recursive = false)
+    {
+        Transform transform = FindChild<Transform>(obj, name, recursive);
+        if (transform == null)
+        {
+            return null;
+        }
+        
+        return transform.gameObject;
+    }
+    
+    //            탐색을 시작할 최상위 부모의 이름, 찾으려는 자식 개체의 이름, 자식 개체의 모든 하위 개체 탐색 여부
     public static T FindChild<T>(GameObject obj, string name = null, bool recursive = false) where T : UnityEngine.Object
     {
         if (obj == null)
@@ -11,6 +23,7 @@ public class Util
             return null;
         }
 
+        // 직계 자식만 탐색
         if (recursive == false)
         {
             for (int i = 0; i < obj.transform.childCount; i++)
@@ -26,7 +39,7 @@ public class Util
                 }
             }
         }
-        else
+        else // 직계 자식 하위의 모든 자식까지 탐색
         {
             foreach (T component in obj.GetComponentsInChildren<T>())
             {
