@@ -22,8 +22,6 @@ public class PlayerController : MonoBehaviour
     {
         Managers.Input.MouseAction -= OnMouseEvent;
         Managers.Input.MouseAction += OnMouseEvent;
-        
-        Managers.Resource.Instantiate("UI/UI_Button");
     }
     
     private void Update()

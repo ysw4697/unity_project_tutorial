@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UI_Button : UI_Base
@@ -23,19 +24,31 @@ public class UI_Button : UI_Base
         TestObject,
     }
 
+    enum Images
+    {
+        ItemIcon,
+    }
+
     private void Start()
     {
         Bind<Button>(typeof(Buttons));
         Bind<TMP_Text>(typeof(Texts));
         Bind<GameObject>(typeof(GameObjects));
-
-        GetText((int)Texts.ScoreText).text = "바인드 테스트";
+        Bind<Image>(typeof(Images));
+        
+        GetButton((int)Buttons.PointButton).gameObject.AddUIEvent(OnButtonClicked);
+        
+        GameObject go = GetImage((int)Images.ItemIcon).gameObject;
+        AddUIEvent(go, (PointerEventData data) => { go.transform.position = data.position; }
+                                                                                , Define.UIEvent.Drag);
     }
     
     private int _score = 0;
     
-    public void OnButtonClicked()
+    public void OnButtonClicked(PointerEventData data)
     {
         _score++;
+        
+        GetText((int)Texts.ScoreText).text = $"점수: {_score}점";
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UI_Base : MonoBehaviour
@@ -46,4 +47,23 @@ public class UI_Base : MonoBehaviour
     protected TMP_Text GetText(int index) { return Get<TMP_Text>(index); }
     protected Button GetButton(int index) { return Get<Button>(index); }
     protected Image GetImage(int index) { return Get<Image>(index); }
+
+    public static void AddUIEvent(GameObject go, Action<PointerEventData> action, Define.UIEvent type = Define.UIEvent.Click)
+    {
+        UI_EventHandler evt = Util.GetOrAddComponent<UI_EventHandler>(go);
+
+        switch (type)
+        {
+            case Define.UIEvent.Click:
+                evt.OnClickHandler -= action;
+                evt.OnClickHandler += action;
+                break;
+            case Define.UIEvent.Drag:
+                evt.OnDragHandler -= action;
+                evt.OnDragHandler += action;
+                break;
+        }
+        
+        evt.OnDragHandler += ((PointerEventData data) => { evt.transform.position = data.position; });
+    }
 }
