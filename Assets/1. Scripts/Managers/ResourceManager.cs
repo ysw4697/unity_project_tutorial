@@ -11,15 +11,22 @@ public class ResourceManager
 
     public GameObject Instantiate(string path, Transform parent = null)
     {
-        GameObject Prefab = this.Load<GameObject>($"Prefabs/{path}");
+        GameObject prefab = Load<GameObject>($"Prefabs/{path}");
 
-        if (parent == null)
+        if (prefab == null)
         {
             Debug.LogError($"Can't find parent of {path}");
             return null;
         }
         
-        return Object.Instantiate(Prefab, parent);
+        GameObject go = Object.Instantiate(prefab, parent);
+        int index = go.name.IndexOf("(Clone)");
+        if (index > 0)
+        {
+            go.name = go.name.Substring(0, index);
+        }
+        
+        return go;
     }
 
     public void Destroy(GameObject obj)
