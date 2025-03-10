@@ -22,9 +22,6 @@ public class PlayerController : MonoBehaviour
     {
         Managers.Input.MouseAction -= OnMouseEvent;
         Managers.Input.MouseAction += OnMouseEvent;
-        
-        // 임시
-        Managers.UI.ShowSceneUI<UI_Inven>();
     }
     
     private void Update()
