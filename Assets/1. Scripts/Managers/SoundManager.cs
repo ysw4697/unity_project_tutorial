@@ -1,28 +1,108 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class SoundManager 
 {
-    public void Play(Define.Sound type, string path, float pitch = 1.0f)
+    AudioSource[] _audioSources = new AudioSource[(int)Define.Sound.MaxCount];
+
+    Dictionary<string, AudioClip> _audioClips = new Dictionary<string, AudioClip>();
+    
+    public void Init()
+    {
+        GameObject root = GameObject.Find("@Sound");
+        if (root == null)
+        {
+            root = new GameObject { name = "@Sound" };
+            Object.DontDestroyOnLoad(root);
+            
+            string[] soundNames = System.Enum.GetNames(typeof(Define.Sound));
+            for (int i = 0; i < soundNames.Length - 1; i++)
+            {
+                GameObject go = new GameObject{ name = soundNames[i] };
+                _audioSources[i] = go.AddComponent<AudioSource>();
+                go.transform.parent = root.transform;
+            }
+            
+            _audioSources[(int)Define.Sound.Bgm].loop = true;
+        }
+    }
+
+    public void Clear()
+    {
+        foreach (var audioSource in _audioSources)
+        {
+            audioSource.clip = null;
+            audioSource.Stop();
+        }
+        _audioClips.Clear();
+    }
+    
+    public void Play(string path, Define.Sound type = Define.Sound.Effect, float pitch = 1.0f)
+    {
+        AudioClip audioClip = GetOrAddAudioClip(path, type);
+        Play(audioClip, type, pitch);
+    }
+
+    // 오버로딩
+    // 위의 메서드는 데이터관리를 통해 사용하기 위한 함수, 지금은 그냥 오디오 클립 자체를 받아서 사용하기 위한 메서드로 구현(편의를 위해)
+    public void Play(AudioClip audioClip, Define.Sound type = Define.Sound.Effect, float pitch = 1.0f)
+    {
+        if (audioClip == null)
+        {
+            return;
+        }
+        
+        if (type == Define.Sound.Bgm)
+        {
+            AudioSource audioSource = _audioSources[(int)Define.Sound.Bgm];
+
+            if (audioSource.isPlaying)
+            {
+                audioSource.Stop();
+            }
+            
+            audioSource.pitch = pitch;
+            audioSource.clip = audioClip;
+            audioSource.Play();
+        }
+        else
+        {
+            AudioSource audioSource = _audioSources[(int)Define.Sound.Effect];
+            audioSource.pitch = pitch;
+            audioSource.PlayOneShot(audioClip, pitch);
+        }
+    }
+    
+    AudioClip GetOrAddAudioClip(string path, Define.Sound type = Define.Sound.Effect)
     {
         if (path.Contains("Sounds/") == false)
         {
             path = $"Sounds/{path}";
         }
         
+        AudioClip audioClip = null;
+        
         if (type == Define.Sound.Bgm)
         {
-            AudioClip audioClip = Managers.Resource.Load<AudioClip>(path);
-            if (audioClip == null)
-            {
-                Debug.LogError($"오디오 클립을 못 찾음: {path}");
-                return;
-            }
+            audioClip = Managers.Resource.Load<AudioClip>(path);
         }
         else
         {
-            
+            if (_audioClips.TryGetValue(path, out audioClip) == false)
+            {
+                audioClip = Managers.Resource.Load<AudioClip>(path);
+                _audioClips.Add(path, audioClip);
+            }
         }
+        
+        if (audioClip == null)
+        {
+            Debug.LogError($"오디오 클립을 못 찾음: {path}");
+        }
+        
+        return audioClip;
     }
 }
