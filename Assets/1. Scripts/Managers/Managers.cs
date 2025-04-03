@@ -9,6 +9,7 @@ public class Managers : MonoBehaviour
     private static Managers s_instance;
     public static Managers Instance { get { Init(); return s_instance; } } 
     
+    DataManager _data = new DataManager();
     InputManager _input = new InputManager();
     PoolManager _pool = new PoolManager();
     ResourceManager _resource = new ResourceManager();
@@ -16,6 +17,7 @@ public class Managers : MonoBehaviour
     SoundManager _sound = new SoundManager();
     UIManager _ui = new UIManager();
     
+    public static DataManager Data { get { return Instance._data; } }
     public static InputManager Input { get { return Instance._input; } }
     public static PoolManager Pool { get { return Instance._pool; } }
     public static ResourceManager Resource { get { return Instance._resource; } }
@@ -46,11 +48,13 @@ public class Managers : MonoBehaviour
             DontDestroyOnLoad(go);
             s_instance = go.GetComponent<Managers>();
             
+            s_instance._data.Init();
             s_instance._pool.Init();
             s_instance._sound.Init();
         }
     }
 
+    // data는 항상 들고 있어야 하기 때문에 Clear를 사용하지 않음
     public static void Clear()
     {
         Input.Clear();
