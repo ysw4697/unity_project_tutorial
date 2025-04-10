@@ -2,30 +2,50 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.U2D;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Serialization;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float _moveSpeed = 10.0f;
-    
+    private PlayerStat _stat;
     private Vector3 _destinationPosition;
+
+    private Texture2D _attackIcon;
+    private Texture2D _handIcon;
+
+    public enum CursorType
+    {
+        None,
+        Attack,
+        Hand,
+    }
+    
+    private CursorType _cursorType = CursorType.None;
     
     public enum PlayerState
     {
         Die,
         Moving,
-        Idle
+        Idle,
+        Skill,
     }
     private PlayerState _state = PlayerState.Idle;
     
     private void Start()
     {
-        Managers.Input.MouseAction -= OnMouseEvent;
-        Managers.Input.MouseAction += OnMouseEvent;
+        _attackIcon = Managers.Resource.Load<Texture2D>("Textures/Cursors/Cursor_Attack");
+        _handIcon = Managers.Resource.Load<Texture2D>("Textures/Cursors/Cursor_Hand");
+        
+        _stat = GetComponent<PlayerStat>();
+        
+        Managers.Input.MouseAction -= OnMouseClicked;
+        Managers.Input.MouseAction += OnMouseClicked;
     }
     
     private void Update()
     {
+        UpdateMouseCursor();
+        
         switch (_state)
         {
             case PlayerState.Die:
@@ -48,19 +68,30 @@ public class PlayerController : MonoBehaviour
     private void UpdateMoving()
     {
         Vector3 direction = _destinationPosition - transform.position;
-        if (direction.magnitude < 0.0001f)
+        if (direction.magnitude < 0.1f)
         {
             _state = PlayerState.Idle;
         }
         else
         {
-            float moveDistance = Mathf.Clamp(_moveSpeed * Time.deltaTime, 0.0f, direction.magnitude);
-            transform.position += direction.normalized * moveDistance;
+            // todo
+            NavMeshAgent navMeshAgent = gameObject.GetOrAddComponent<NavMeshAgent>();
+            
+            float moveDistance = Mathf.Clamp(_stat.MoveSpeed * Time.deltaTime, 0.0f, direction.magnitude);
+            navMeshAgent.Move(direction.normalized * moveDistance);
+
+            Debug.DrawRay(transform.position + Vector3.up * 0.5f, direction.normalized, Color.red);
+            if (Physics.Raycast(transform.position + Vector3.up * 0.5f, direction, 1.0f, LayerMask.GetMask("Block")))
+            {
+                _state = PlayerState.Idle;
+                return;
+            }
+
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), 10.0f * Time.deltaTime);
         }
         
         Animator animator = GetComponent<Animator>();
-        animator.SetFloat("speed", _moveSpeed);
+        animator.SetFloat("speed", _stat.MoveSpeed);
     }
 
     private void UpdateIdle()
@@ -69,7 +100,36 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("speed", 0.0f);
     }
 
-    private void OnMouseEvent(Define.MouseEvent mouseEvent)
+    private void UpdateMouseCursor()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, 100.0f, _mask))
+        {
+            if (hit.collider.gameObject.layer == (int)Define.Layer.Monster)
+            {
+                if (_cursorType != CursorType.Attack)
+                {
+                    Cursor.SetCursor(_attackIcon, new Vector2(_attackIcon.width / 4.67f, _attackIcon.height / 28.0f), 
+                        CursorMode.Auto);
+                    _cursorType = CursorType.Attack;
+                }
+            }
+            else
+            {
+                if (_cursorType != CursorType.Hand)
+                {
+                    Cursor.SetCursor(_handIcon, new Vector2(_handIcon.width / 3.5f, _handIcon.height / 9.3f), 
+                        CursorMode.Auto);
+                    _cursorType = CursorType.Hand;
+                }
+            }
+        }
+    }
+    
+    int _mask = (1 << (int)Define.Layer.Ground | 1 << (int)Define.Layer.Monster);
+    private void OnMouseClicked(Define.MouseEvent mouseEvent)
     {
         if (_state == PlayerState.Die)
         {
@@ -77,13 +137,22 @@ public class PlayerController : MonoBehaviour
         }
         
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Debug.DrawRay(Camera.main.transform.position, ray.direction * 100.0f, Color.red, 1.0f);
+        // Debug.DrawRay(Camera.main.transform.position, ray.direction * 100.0f, Color.red, 1.0f);
             
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 100.0f, LayerMask.GetMask("Wall")))
+        if (Physics.Raycast(ray, out hit, 100.0f, _mask))
         {
             _destinationPosition = hit.point;
             _state = PlayerState.Moving;
+
+            if (hit.collider.gameObject.layer == (int)Define.Layer.Monster)
+            {
+                Debug.Log("Monster 클릭");
+            }
+            else
+            {
+                Debug.Log("Ground 클릭");
+            }
         }
     }
 }

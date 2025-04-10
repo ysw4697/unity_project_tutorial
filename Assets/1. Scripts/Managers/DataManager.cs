@@ -13,11 +13,11 @@ public interface ILoader<Key, Value>
 // Json이 더 빠름, XML은 계층 구조를 통한 표현력(가독성?)이 좋음
 public class DataManager
 {
-    public Dictionary<int, Stat> StatDict { get; private set; } = new Dictionary<int, Stat>();
+    public Dictionary<int, Data.Stat> StatDict { get; private set; } = new Dictionary<int, Data.Stat>();
     
     public void Init()
     {
-        StatDict = LoadJson<StatData, int, Stat>("StatData").MakeDic();
+        StatDict = LoadJson<Data.StatData, int, Data.Stat>("StatData").MakeDic();
     }
 
     Loader LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>
