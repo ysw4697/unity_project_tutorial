@@ -38,8 +38,8 @@ public class PlayerController : MonoBehaviour
         
         _stat = GetComponent<PlayerStat>();
         
-        Managers.Input.MouseAction -= OnMouseClicked;
-        Managers.Input.MouseAction += OnMouseClicked;
+        Managers.Input.MouseAction -= OnMouseEvent;
+        Managers.Input.MouseAction += OnMouseEvent;
     }
     
     private void Update()
@@ -83,7 +83,10 @@ public class PlayerController : MonoBehaviour
             Debug.DrawRay(transform.position + Vector3.up * 0.5f, direction.normalized, Color.red);
             if (Physics.Raycast(transform.position + Vector3.up * 0.5f, direction, 1.0f, LayerMask.GetMask("Block")))
             {
-                _state = PlayerState.Idle;
+                if (!Input.GetMouseButton(0))
+                {
+                    _state = PlayerState.Idle;
+                }
                 return;
             }
 
@@ -102,6 +105,11 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateMouseCursor()
     {
+        if (Input.GetMouseButton(0))
+        {
+            return;    
+        }
+        
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             
         RaycastHit hit;
@@ -129,30 +137,54 @@ public class PlayerController : MonoBehaviour
     }
     
     int _mask = (1 << (int)Define.Layer.Ground | 1 << (int)Define.Layer.Monster);
-    private void OnMouseClicked(Define.MouseEvent mouseEvent)
+    private GameObject _lockTarget;
+    private void OnMouseEvent(Define.MouseEvent mouseEvent)
     {
         if (_state == PlayerState.Die)
         {
             return;
         }
         
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        // Debug.DrawRay(Camera.main.transform.position, ray.direction * 100.0f, Color.red, 1.0f);
-            
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 100.0f, _mask))
-        {
-            _destinationPosition = hit.point;
-            _state = PlayerState.Moving;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        bool raycastHit = Physics.Raycast(ray, out hit, 100.0f, _mask);
+        // Debug.DrawRay(Camera.main.transform.position, ray.direction * 100.0f, Color.red, 1.0f);
 
-            if (hit.collider.gameObject.layer == (int)Define.Layer.Monster)
+        switch (mouseEvent)
+        {
+            case Define.MouseEvent.PointerDown:
             {
-                Debug.Log("Monster 클릭");
+                if (raycastHit)
+                {
+                    _destinationPosition = hit.point;
+                    _state = PlayerState.Moving;
+                    
+                    if (hit.collider.gameObject.layer == (int)Define.Layer.Monster)
+                    {
+                        _lockTarget = hit.collider.gameObject;
+                    }
+                    else
+                    {
+                        _lockTarget = null;
+                    }
+                }
             }
-            else
+                break;
+            case Define.MouseEvent.Pess:
             {
-                Debug.Log("Ground 클릭");
+                if (_lockTarget != null)
+                {
+                    _destinationPosition = _lockTarget.transform.position;
+                }
+                else if (raycastHit)
+                {
+                    _destinationPosition = hit.point;
+                }
             }
+                break;
+            case Define.MouseEvent.PointerUp:
+                _lockTarget = null;
+                break;
         }
     }
 }
