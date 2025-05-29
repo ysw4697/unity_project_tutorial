@@ -10,6 +10,7 @@ public class PlayerController : BaseController
     
     public override void Init()
     {
+        worldObjectType = Define.WorldObject.Player;
         _stat = GetComponent<PlayerStat>();
         if (gameObject.GetComponentInChildren<UI_HPBar>() == null)
         {

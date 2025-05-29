@@ -7,8 +7,17 @@ public class Managers : MonoBehaviour
 {
     // 유일성 보장
     private static Managers s_instance;
-    public static Managers Instance { get { Init(); return s_instance; } } 
-    
+    public static Managers Instance { get { Init(); return s_instance; } }
+
+    #region Contents
+
+    GameManager _game = new GameManager();
+    public static GameManager Game { get { return Instance._game; } }
+
+    #endregion
+
+    #region Core
+
     DataManager _data = new DataManager();
     InputManager _input = new InputManager();
     PoolManager _pool = new PoolManager();
@@ -24,6 +33,8 @@ public class Managers : MonoBehaviour
     public static SceneManagerEx Scene { get { return Instance._scene; } }
     public static SoundManager Sound { get { return Instance._sound; } }
     public static UIManager UI { get { return Instance._ui; } }
+        
+    #endregion
     
     private void Start()
     {

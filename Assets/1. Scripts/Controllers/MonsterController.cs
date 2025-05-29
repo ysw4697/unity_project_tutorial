@@ -10,6 +10,7 @@ public class MonsterController : BaseController
     
     public override void Init()
     {
+        worldObjectType = Define.WorldObject.Monster;
         _stat = GetComponent<Stat>();
         if (gameObject.GetComponentInChildren<UI_HPBar>() == null)
         {
@@ -99,7 +100,7 @@ public class MonsterController : BaseController
             }
             else
             {
-                GameObject.Destroy(_lockTarget.gameObject);
+                Managers.Game.Despawn(_lockTarget.gameObject);
                 State = Define.State.Idle;
             }
         }
