@@ -13,8 +13,10 @@ namespace Data
         // public이나 [SerializeField]를 붙여야 어떤 데이타를 가져와야 하는지 읽을 수 있음
         // json 문자열을 해당 타입으로 파싱함( "level" 값의 문자열을 파싱했을 때 int 타입이 아니면 오류가 남)
         public int level;
-        public int hp;
+        public int maxHp;
         public int attack;
+        public int defense;
+        public int totalExp;
     }
 
     [Serializable]

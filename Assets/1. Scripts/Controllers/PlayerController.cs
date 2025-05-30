@@ -36,6 +36,8 @@ public class PlayerController : BaseController
         
         // 이동
         Vector3 direction = _destinationPosition - transform.position;
+        direction.y = 0.0f;
+        
         if (direction.magnitude < 0.1f)
         {
             State = Define.State.Idle;
@@ -73,9 +75,7 @@ public class PlayerController : BaseController
         if (_lockTarget != null)
         {
             Stat targetStat = _lockTarget.GetComponent<Stat>();
-            int damage = Mathf.Max(0, _stat.Attack - targetStat.Defence);
-            
-            targetStat.Hp -= damage;
+            targetStat.OnAttacked(_stat);
         }
         
         if (_stopSkill)
